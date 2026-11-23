@@ -1,4 +1,3 @@
-"""Week 2：工具描述與分派 —— 模型提出，程式執行。
 
 流程（兩筆 API 交易）：
 1. 第一次呼叫帶 tools，取得模型建議的 tool_calls
@@ -6,8 +5,7 @@
 3. 把結果以 role: "tool" 回填（tool_call_id 對應第一次的 id）
 4. 第二次呼叫不帶 tools，取得最終 content
 
-API key 從環境變數 NVIDIA_API_KEY 讀取（可放在 .env，勿提交）。
-"""
+
 import json
 import os
 from pathlib import Path
@@ -16,7 +14,6 @@ import requests
 
 API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 MODEL = "minimaxai/minimax-m3.1-flash"
-# 預設用教材的 NVIDIA 端點；若課堂允許改用其他 OpenAI 相容服務，可在 .env 設定 API_URL / MODEL 覆寫
 
 HTTP_GET_TOOL = {
     "type": "function",
@@ -38,7 +35,6 @@ HTTP_GET_TOOL = {
 
 
 def load_dotenv(path=".env"):
-    """簡易 .env 載入：KEY=VALUE，不覆蓋已存在的環境變數。"""
     env_file = Path(__file__).with_name(path)
     if not env_file.exists():
         return
@@ -90,7 +86,7 @@ def http_get(url):
 def dispatch(name, arguments):
     if name != "http_get":
         raise ValueError(f"unknown tool: {name}")
-    args = json.loads(arguments)  # arguments 是 JSON 字串，要先解析
+    args = json.loads(arguments)  
     return http_get(args["url"])
 
 
@@ -103,14 +99,14 @@ if __name__ == "__main__":
         }
     ]
 
-    # 第一次 API 呼叫：帶 tools，期待拿到 tool_calls
+   
     print("=== 第一次 API 呼叫（帶 tools）===")
     first = call_model(messages, tools=[HTTP_GET_TOOL])
     print("tool_calls:", json.dumps(first.get("tool_calls"), ensure_ascii=False, indent=2))
     if not first.get("tool_calls"):
         raise SystemExit("沒有拿到 tool_calls；先檢查工具描述與 user message。")
 
-    # 工具執行與回填
+   
     print("=== 工具執行 ===")
     messages.append(first)
     for call in first["tool_calls"]:
@@ -124,7 +120,7 @@ if __name__ == "__main__":
             "content": json.dumps(result, ensure_ascii=False),
         })
 
-    # 第二次 API 呼叫：不帶 tools，只能根據 tool result 回答
+    
     print("=== 第二次 API 呼叫（不帶 tools）===")
     print("回填的 tool message:", json.dumps(messages[-1], ensure_ascii=False))
     final = call_model(messages)
