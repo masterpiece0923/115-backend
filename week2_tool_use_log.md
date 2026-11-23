@@ -2,7 +2,7 @@
 
 - 程式：`week2_tool_dispatch.py`
 - 執行日期：2026-11-23
-- 任務（user message）：`用 http_get 抓取 https://example.com，然後用一句話說明你看到什麼。`
+- 任務：`用 http_get 抓取 https://example.com，然後用一句話說明你看到什麼。`
 
 ## 觀察表
 
